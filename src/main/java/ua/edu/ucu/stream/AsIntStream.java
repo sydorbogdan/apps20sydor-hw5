@@ -1,6 +1,10 @@
 package ua.edu.ucu.stream;
 
-import ua.edu.ucu.function.*;
+import ua.edu.ucu.function.IntBinaryOperator;
+import ua.edu.ucu.function.IntConsumer;
+import ua.edu.ucu.function.IntPredicate;
+import ua.edu.ucu.function.IntToIntStreamFunction;
+import ua.edu.ucu.function.IntUnaryOperator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,15 +80,15 @@ public class AsIntStream implements IntStream, Iterable<Integer> {
     @Override
     public IntStream filter(IntPredicate predicate) {
         this.dataIterator = new Iterator<Integer>() {
-            final Iterator<Integer> filterIterator = dataIterator;
+            private final Iterator<Integer> filterIterator = dataIterator;
 
             @Override
             public Integer next() {
-                Integer curr_pos = filterIterator.next();
-                while (!predicate.test(curr_pos)) {
-                    curr_pos = filterIterator.next();
+                Integer currPos = filterIterator.next();
+                while (!predicate.test(currPos)) {
+                    currPos = filterIterator.next();
                 }
-                return curr_pos;
+                return currPos;
             }
 
             @Override
@@ -105,7 +109,7 @@ public class AsIntStream implements IntStream, Iterable<Integer> {
     @Override
     public IntStream map(IntUnaryOperator mapper) {
         this.dataIterator = new Iterator<Integer>() {
-            final Iterator<Integer> mapIterator = dataIterator;
+            private final Iterator<Integer> mapIterator = dataIterator;
 
             @Override
             public boolean hasNext() {
@@ -123,18 +127,22 @@ public class AsIntStream implements IntStream, Iterable<Integer> {
     @Override
     public IntStream flatMap(IntToIntStreamFunction func) {
         this.dataIterator = new Iterator<Integer>() {
-            final Iterator<Integer> flatMapIterator = dataIterator;
-            AsIntStream currStream = (AsIntStream) func.applyAsIntStream(flatMapIterator.next());
+            private final Iterator<Integer> flatMapIterator = dataIterator;
+            private AsIntStream currStream = (AsIntStream)
+                    func.applyAsIntStream(flatMapIterator.next());
 
             @Override
             public boolean hasNext() {
-                return currStream.dataIterator.hasNext() || flatMapIterator.hasNext();
+                return currStream.dataIterator.hasNext() || flatMapIterator
+                        .hasNext();
             }
 
             @Override
             public Integer next() {
-                if (!currStream.dataIterator.hasNext() && flatMapIterator.hasNext()) {
-                    currStream = (AsIntStream) func.applyAsIntStream(flatMapIterator.next());
+                if (!currStream.dataIterator.hasNext() && flatMapIterator
+                        .hasNext()) {
+                    currStream = (AsIntStream) func.applyAsIntStream(
+                            flatMapIterator.next());
                 }
                 return currStream.dataIterator.next();
             }
@@ -145,10 +153,14 @@ public class AsIntStream implements IntStream, Iterable<Integer> {
 
     @Override
     public int reduce(int identity, IntBinaryOperator op) {
-        for (Integer i : this) {
-            identity = op.apply(identity, i);
+        if (!dataIterator.hasNext()) {
+            throw new IllegalArgumentException();
         }
-        return identity;
+        int res = identity;
+        for (Integer i : this) {
+            res = op.apply(res, i);
+        }
+        return res;
     }
 
 
