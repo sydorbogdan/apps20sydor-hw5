@@ -17,6 +17,7 @@ public class StreamAppTest {
     @Before
     public void init() {
         int[] intArr = {-1, 0, 1, 2, 3};
+        new AsIntStream(intArr);
         intStream = AsIntStream.of(intArr);
     }
 

@@ -1,6 +1,10 @@
 package ua.edu.ucu.stream;
 
-import ua.edu.ucu.function.*;
+import ua.edu.ucu.function.IntBinaryOperator;
+import ua.edu.ucu.function.IntConsumer;
+import ua.edu.ucu.function.IntPredicate;
+import ua.edu.ucu.function.IntToIntStreamFunction;
+import ua.edu.ucu.function.IntUnaryOperator;
 
 public interface IntStream {
 
@@ -9,7 +13,7 @@ public interface IntStream {
     Integer max();
 
     Integer min();
-    
+
     IntStream flatMap(IntToIntStreamFunction func);
 
     long count();
