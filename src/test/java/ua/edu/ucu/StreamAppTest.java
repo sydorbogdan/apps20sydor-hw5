@@ -106,4 +106,12 @@ public class StreamAppTest {
         java.util.Optional.of(st.max());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testStreamReduceErr() {
+        int[] intArr = {};
+        IntStream st = AsIntStream.of(intArr);
+        java.util.Optional.of(st.reduce(0, (t, x) -> t += x));
+    }
+
+
 }

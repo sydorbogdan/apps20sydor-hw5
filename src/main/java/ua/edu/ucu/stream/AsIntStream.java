@@ -126,7 +126,7 @@ public class AsIntStream implements IntStream, Iterable<Integer> {
 
     @Override
     public IntStream flatMap(IntToIntStreamFunction func) {
-        this.dataIterator = new Iterator<Integer>() {
+        dataIterator = new Iterator<Integer>() {
             private final Iterator<Integer> flatMapIterator = dataIterator;
             private AsIntStream currStream = (AsIntStream)
                     func.applyAsIntStream(flatMapIterator.next());
