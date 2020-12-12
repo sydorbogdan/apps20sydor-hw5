@@ -23,23 +23,35 @@ public class AsIntStream implements IntStream, Iterable<Integer> {
 
     @Override
     public Double average() throws ArithmeticException {
-        long sz = 0;
-        int sm = 0;
-        for (Integer i : this) {
-            sz += 1;
-            sm += i;
+        try {
+            long sz = 0;
+            int sm = 0;
+            for (Integer i : this) {
+                sz += 1;
+                sm += i;
+            }
+            return (double) (sm / sz);
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException();
         }
-        return (double) (sm / sz);
     }
+
 
     @Override
     public Integer max() {
+        if (!dataIterator.hasNext()) {
+            throw new IllegalArgumentException();
+        }
         return reduce(dataIterator.next(), Math::max);
     }
 
     @Override
     public Integer min() {
+        if (!dataIterator.hasNext()) {
+            throw new IllegalArgumentException();
+        }
         return reduce(dataIterator.next(), Math::min);
+
     }
 
     @Override
@@ -53,7 +65,11 @@ public class AsIntStream implements IntStream, Iterable<Integer> {
 
     @Override
     public Integer sum() {
+        if (!dataIterator.hasNext()) {
+            throw new IllegalArgumentException();
+        }
         return reduce(0, (sum, x) -> sum += x);
+
     }
 
 
